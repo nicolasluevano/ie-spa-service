@@ -1503,3 +1503,69 @@ section {
         padding: var(--space-6);
     }
 }
+
+/* ============================================
+   Sticky Mobile CTA
+   ============================================ */
+:root {
+    --sticky-cta-height: 70px;
+}
+
+.sticky-cta {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 999;
+    background: var(--color-primary-darker);
+    padding: var(--space-3);
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
+    gap: var(--space-3);
+}
+
+.sticky-cta.visible {
+    display: flex;
+}
+
+.sticky-cta__btn {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-4) var(--space-4);
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    background: white;
+    color: var(--color-primary-darker);
+    border: 2px solid white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    text-align: center;
+    white-space: nowrap;
+}
+
+.sticky-cta__btn:active {
+    background: var(--color-primary-lighter);
+}
+
+.sticky-cta__btn .icon {
+    width: 18px;
+    height: 18px;
+}
+
+/* Only show on mobile */
+@media (min-width: 769px) {
+    .sticky-cta {
+        display: none !important;
+    }
+}
+
+/* Add bottom padding to body when sticky CTA is visible on mobile */
+@media (max-width: 768px) {
+    body.sticky-cta-active {
+        padding-bottom: var(--sticky-cta-height);
+    }
+}

@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
     initContactForm();
     initScrollAnimations();
     initHeaderScroll();
+    initStickyCta();
     setCurrentYear();
 });
 
@@ -314,78 +315,104 @@ function initContactForm() {
         const cleaned = phone.replace(/\D/g, '');
         return cleaned.length >= 10;
     }
+}
 
-    /**
-     * Scroll Animations using Intersection Observer
-     */
-    function initScrollAnimations() {
-        // Check if IntersectionObserver is supported
-        if (!('IntersectionObserver' in window)) return;
+/**
+ * Scroll Animations using Intersection Observer
+ */
+function initScrollAnimations() {
+    // Check if IntersectionObserver is supported
+    if (!('IntersectionObserver' in window)) return;
 
-        const animatedElements = document.querySelectorAll(
-            '.service-card, .testimonial-card, .why-us__item, .about__image, .about__text, .service-areas__region'
-        );
+    const animatedElements = document.querySelectorAll(
+        '.service-card, .testimonial-card, .why-us__item, .about__image, .about__text, .service-areas__region'
+    );
 
-        // Add initial styles
-        animatedElements.forEach(el => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(30px)';
-            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        });
+    // Add initial styles
+    animatedElements.forEach(el => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    });
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry, index) => {
-                if (entry.isIntersecting) {
-                    // Stagger the animations
-                    setTimeout(() => {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
-                    }, index * 100);
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
+                // Stagger the animations
+                setTimeout(() => {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }, index * 100);
 
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        });
-
-        animatedElements.forEach(el => observer.observe(el));
-    }
-
-    /**
-     * Header background on scroll
-     */
-    function initHeaderScroll() {
-        const header = document.getElementById('header');
-
-        if (!header) return;
-
-        window.addEventListener('scroll', () => {
-            if (window.scrollY > 100) {
-                header.style.boxShadow = '0 4px 6px -1px rgb(0 0 0 / 0.1)';
-            } else {
-                header.style.boxShadow = '0 1px 2px 0 rgb(0 0 0 / 0.05)';
+                observer.unobserve(entry.target);
             }
         });
-    }
+    }, {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    });
 
-    /**
-     * Set current year in footer
-     */
-    function setCurrentYear() {
-        const yearEl = document.getElementById('currentYear');
-        if (yearEl) {
-            yearEl.textContent = new Date().getFullYear();
+    animatedElements.forEach(el => observer.observe(el));
+}
+
+/**
+ * Header background on scroll
+ */
+function initHeaderScroll() {
+    const header = document.getElementById('header');
+
+    if (!header) return;
+
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 100) {
+            header.style.boxShadow = '0 4px 6px -1px rgb(0 0 0 / 0.1)';
+        } else {
+            header.style.boxShadow = '0 1px 2px 0 rgb(0 0 0 / 0.05)';
+        }
+    });
+}
+
+/**
+ * Sticky Mobile CTA - Show/Hide based on scroll position
+ */
+function initStickyCta() {
+    const stickyCta = document.getElementById('stickyCta');
+    const hero = document.getElementById('home');
+
+    if (!stickyCta || !hero) return;
+
+    function toggleStickyCta() {
+        const heroBottom = hero.offsetTop + hero.offsetHeight;
+
+        if (window.scrollY > heroBottom) {
+            stickyCta.classList.add('visible');
+            document.body.classList.add('sticky-cta-active');
+        } else {
+            stickyCta.classList.remove('visible');
+            document.body.classList.remove('sticky-cta-active');
         }
     }
 
-    /**
-     * Add CSS animation keyframes dynamically
-     */
-    (function addAnimationStyles() {
-        const style = document.createElement('style');
-        style.textContent = `
+    window.addEventListener('scroll', toggleStickyCta);
+    toggleStickyCta(); // Check on load
+}
+
+/**
+ * Set current year in footer
+ */
+function setCurrentYear() {
+    const yearEl = document.getElementById('currentYear');
+    if (yearEl) {
+        yearEl.textContent = new Date().getFullYear();
+    }
+}
+
+/**
+ * Add CSS animation keyframes dynamically
+ */
+(function addAnimationStyles() {
+    const style = document.createElement('style');
+    style.textContent = `
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -395,5 +422,5 @@ function initContactForm() {
             to { opacity: 0; transform: translateY(-10px); }
         }
     `;
-        document.head.appendChild(style);
-    })();
+    document.head.appendChild(style);
+})();
